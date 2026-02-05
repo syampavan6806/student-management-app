@@ -1,0 +1,40 @@
+services:
+   student-mgmt:
+     image: dockersyampawan/student-management-app:IMAGE_TAG
+     ports:
+       - "8080:8080"
+     environment:
+       - DATABASE_HOST=mongodb
+       - DATABASE_USERNAME=devdb
+       - DATABASE_PASSWORD=devdb@123
+     depends_on:
+       - mongodb
+     deploy:
+       mode: replicated
+       replicas: 2
+       placement:
+         constraints:
+           - node.role == worker
+     networks:
+        - student-mgmt-overlay   
+   mongodb:
+      image: mongo
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=devdb
+        - MONGO_INITDB_ROOT_PASSWORD=devdb@123
+      volumes:
+        - mongovol:/data/db
+      deploy:
+        mode: replicated
+        replicas: 1
+        placement:
+          constraints:
+            - node.role == worker
+      networks:
+         - student-mgmt-overlay
+networks:
+    student-mgmt-overlay:
+      driver: overlay
+volumes:
+    mongovol:
+      driver: local
