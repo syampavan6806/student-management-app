@@ -1,0 +1,28 @@
+services:
+  studentmgmt:
+    image: dockersyampawan/student-management-app:IMAGE_TAG
+    depends_on:
+      - mongodb
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_HOST=mongodb
+      - DATABASE_USERNAME=devdb
+      - DATABASE_PASSWORD=devdb@123
+    networks:
+      - studentmgmtbridge
+  mongodb:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=devdb
+      - MONGO_INITDB_ROOT_PASSWORD=devdb@123
+    networks:
+      - studentmgmtbridge
+    volumes:
+      - mongovol:/data/db
+networks:
+  studentmgmtbridge:
+    driver: bridge
+volumes:
+  mongodata:
+    driver: local
